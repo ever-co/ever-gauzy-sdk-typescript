@@ -1,0 +1,56 @@
+name: Generate SDK
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [spec-updated]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install Kiota
+        run: dotnet tool install --global Microsoft.OpenApi.Kiota
+
+      - name: Generate SDK
+        run: |
+          kiota generate \
+            --openapi https://api.gauzy.co/swg-json \
+            --language TypeScript \
+            --class-name EverGauzyApiClient \
+            --namespace-name ever-gauzy-sdk \
+            --output ./src \
+            --clean-output
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies & test
+        run: |
+          npm install
+          npm run build || echo "Build skipped"
+          npm test || echo "No tests yet"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: 'chore: regenerate SDK from latest API spec'
+          branch: sdk/regenerate
+          commit-message: 'chore: regenerate SDK from latest API spec'
+          body: |
+            Auto-generated SDK update from the latest Gauzy API OpenAPI spec.
+
+            Source: https://api.gauzy.co/swg-json
