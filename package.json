@@ -22,7 +22,7 @@
     "kiota"
   ],
   "author": "Ever Co. LTD <support@ever.co>",
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "homepage": "https://github.com/ever-co/ever-gauzy-sdk-typescript",
   "bugs": {
     "url": "https://github.com/ever-co/ever-gauzy-sdk-typescript/issues"

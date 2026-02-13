@@ -58,7 +58,7 @@ To regenerate, trigger the "Generate SDK" GitHub Action workflow.
 
 ## License
 
-This project is licensed under the [AGPL-3.0](LICENSE) license.
+This SDK is licensed under the [MIT](LICENSE) license.
 
 ## Links
 
