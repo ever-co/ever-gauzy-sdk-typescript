@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   generate:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER_LINUX_X64_4 || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -27,22 +27,22 @@ jobs:
         run: |
           kiota generate \
             --openapi https://api.gauzy.co/swg-json \
-            --language TypeScript \
+            --language Java \
             --class-name EverGauzyApiClient \
-            --namespace-name ever-gauzy-sdk \
-            --output ./src \
+            --namespace-name co.ever.gauzy.sdk \
+            --output ./src/main/java/co/ever/gauzy/sdk \
             --clean-output
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: '20'
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Install dependencies & test
+      - name: Build & test
         run: |
-          npm install
-          npm run build || echo "Build skipped"
-          npm test || echo "No tests yet"
+          mvn compile
+          mvn test || echo "No tests yet"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
